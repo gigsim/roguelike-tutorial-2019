@@ -16,11 +16,12 @@ class Entity:
         self.name: str = name
         self.blocks: bool = blocks
 
-    def draw(self):
+    def draw(self, camera):
         """
         Draw the entity to the terminal
         """
-        terminal.printf(x=self.x, y=self.y, s=f'[color={self.color}]{self.char}[/color]')
+        x, y = camera.apply(self.x, self.y)
+        terminal.printf(x=x, y=y, s=f'[color={self.color}]{self.char}[/color]')
         # terminal.printf(x=self.x, y=self.y, s=f'[color=red]{self.char}[/color]')
         # terminal.printf(x=self.x, y=self.y, s=self.char, color=self.color)
 

@@ -6,6 +6,7 @@ from tcod.map import Map
 
 from entity import Entity
 
+from camera import Camera
 
 class Rect:
     def __init__(self, x, y, w, h):
@@ -142,22 +143,24 @@ class GameMap(Map):
 
                 entities.append(monster)
 
-    def render(self, colors):
+    def render(self, colors, camera: Camera):
         for y in range(self.height):
             for x in range(self.width):
                 wall = self.is_blocked(x, y)
                 visible = self.fov[x, y]
 
+                x_in_camera, y_in_camera = camera.apply(x, y)
+
                 if visible:
                     if wall:
-                        terminal.printf(x=x, y=y, s=f'[color={colors.get("light_wall")}]#[/color]')
+                        terminal.printf(x=x_in_camera, y=y_in_camera, s=f'[color={colors.get("light_wall")}]#[/color]')
                     else:
-                        terminal.printf(x=x, y=y, s=f'[color={colors.get("light_ground")}].[/color]')
+                        terminal.printf(x=x_in_camera, y=y_in_camera, s=f'[color={colors.get("light_ground")}].[/color]')
 
                 elif self.explored[x, y]:
                     if wall:
-                        terminal.printf(x=x, y=y, s=f'[color={colors.get("dark_wall")}]#[/color]')
+                        terminal.printf(x=x_in_camera, y=y_in_camera, s=f'[color={colors.get("dark_wall")}]#[/color]')
                     else:
-                        terminal.printf(x=x, y=y, s=f'[color={colors.get("dark_ground")}].[/color]')
+                        terminal.printf(x=x_in_camera, y=y_in_camera, s=f'[color={colors.get("dark_ground")}].[/color]')
 
         self.explored |= self.fov

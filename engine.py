@@ -6,6 +6,7 @@ from game_states import GameStates
 from input_handlers import handle_keys
 from render_functions import render_all
 
+from camera import Camera
 
 def main():
     window_title: str = 'Bearlibterm/TCOD Roguelike'
@@ -50,6 +51,9 @@ def main():
     game_map.make_map(max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities,
                       max_monsters_per_room)
 
+    camera = Camera(x=0, y=0, width=screen_width, height=screen_height, map_width=map_width, map_height=map_height)
+    camera.update(player)
+
     game_state: GameStates = GameStates.PLAYERS_TURN
 
     terminal.open()
@@ -65,7 +69,7 @@ def main():
                 algorithm=fov_algorithm
             )
 
-        render_all(entities=entities, game_map=game_map, colors=colors)
+        render_all(entities=entities, game_map=game_map, colors=colors, camera=camera)
 
         fov_recompute = False
 
@@ -94,6 +98,8 @@ def main():
                         print(f'You kick the {target.name} in the shins, much to its annoyance!')
                     else:
                         player.move(dx, dy)
+                        
+                        camera.update(player)
 
                         fov_recompute = True
 
